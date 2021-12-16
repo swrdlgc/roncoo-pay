@@ -1,3 +1,5 @@
+logs/
+accountCheck/
 /.idea/*
 */target/
 *.project

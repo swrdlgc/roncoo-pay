@@ -61,7 +61,8 @@ public class PasswordHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(getPwd("roncoo.123","admin_roncoo8d78869f470951332959580424d4bf4f"));
+		System.out.println(getPwd("123456","admin8d78869f470951332959580424d4bf4f"));
+		System.out.println(getPwd("123456","guest183d9f2f0f2ce760e98427a5603d1c73"));
 	}
 
 }

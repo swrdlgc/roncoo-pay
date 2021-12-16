@@ -64,7 +64,10 @@ public class LoginController extends BaseController {
 	 */
 	@RequestMapping("/login")
 	public String login(HttpServletRequest req, Model model) {
-
+		PmsOperator pmsOperator = (PmsOperator) this.getSession().getAttribute("PmsOperator");
+		if(pmsOperator != null) {
+			return index(req, model);
+		}
 		String exceptionClassName = (String) req.getAttribute("shiroLoginFailure");
 		String error = null;
 		if (UnknownAccountException.class.getName().equals(exceptionClassName)) {
@@ -95,6 +98,7 @@ public class LoginController extends BaseController {
 		try {
 			String tree = this.buildOperatorPermissionMenu(pmsOperator);
 			model.addAttribute("tree", tree);
+			model.addAttribute("userName", pmsOperator.getLoginName());
 		} catch (PermissionException e) {
 			LOG.error("登录异常:" + e.getMessage());
 			model.addAttribute("message", e.getMessage());

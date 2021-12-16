@@ -16,7 +16,7 @@
         <div class="headerNav">
 
             <ul class="nav">
-                <li><a target="dialog" mask="true" width="500" height="380" href="${baseURL }/user/userInfo/view?userNo=${userNo}">${userName} </a></li>
+                <li style="color:#b9ccda">欢迎您，${userName}</li>
 
                 <li><a href="${baseURL }/logout">退出系统</a></li>
             </ul>

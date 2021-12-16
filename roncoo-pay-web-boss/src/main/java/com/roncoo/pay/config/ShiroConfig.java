@@ -134,7 +134,9 @@ public class ShiroConfig {
      * @return Shiro主过滤器
      */
     @Bean(name = "shiroFilter")
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(@Qualifier("securityManager") DefaultWebSecurityManager defaultWebSecurityManager, @Qualifier("rcCaptchaValidateFilter") RcCaptchaValidateFilter rcCaptchaValidateFilter) {
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(
+            @Qualifier("securityManager") DefaultWebSecurityManager defaultWebSecurityManager,
+            @Qualifier("rcCaptchaValidateFilter") RcCaptchaValidateFilter rcCaptchaValidateFilter) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(defaultWebSecurityManager);
         shiroFilterFactoryBean.setLoginUrl("/login");
