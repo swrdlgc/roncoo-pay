@@ -78,17 +78,12 @@ public class PmsRolePermissionServiceImpl implements PmsRolePermissionService {
 	private String getActionIdsByRoleIds(String roleIds) {
 		// 得到角色－权限表中roleiId在ids中的所有关联对象
 		List<PmsRolePermission> listRolePermission = pmsRolePermissionDao.listByRoleIds(roleIds); // 构建StringBuffer
-		StringBuffer actionIdsBuf = new StringBuffer("");
+
+		List<Long> listPemissionId = new ArrayList<>(listRolePermission.size());
+		listRolePermission.forEach(p -> listPemissionId.add(p.getPermissionId()));
+
 		// 拼接字符串
-		for (PmsRolePermission pmsRolePermission : listRolePermission) {
-			actionIdsBuf.append(pmsRolePermission.getPermissionId()).append(",");
-		}
-		String actionIds = actionIdsBuf.toString();
-		// 截取字符串
-		if (StringUtils.isEmpty(actionIds) && actionIds.length() > 0) {
-			actionIds = actionIds.substring(0, actionIds.length() - 1); // 去掉最后一个逗号
-		}
-		return actionIds;
+		return org.apache.commons.lang.StringUtils.join(listPemissionId, ",");
 	}
 
 	// /////////////////////////////下面：基本操作方法///////////////////////////////////////////////
@@ -122,7 +117,7 @@ public class PmsRolePermissionServiceImpl implements PmsRolePermissionService {
 	 * 分页查询pmsOperator
 	 * 
 	 * @param pageParam
-	 * @param ActivityVo
+	 * @param pmsRolePermission
 	 *            PmsOperator
 	 * @return
 	 */
