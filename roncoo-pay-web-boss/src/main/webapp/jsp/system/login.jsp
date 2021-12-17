@@ -71,7 +71,14 @@
 					</div>
 				</c:if>
 				<div class="login_bar">
-					<input class="sub" type="submit" value=" "/>
+					<ul>
+						<li>
+							<input type="checkbox" name="rememberMe"/>下次登陆记住我
+						</li>
+						<li>
+							<input class="sub" type="submit" value=" "/>
+						</li>
+					</ul>
 				</div>
 			</form>
 

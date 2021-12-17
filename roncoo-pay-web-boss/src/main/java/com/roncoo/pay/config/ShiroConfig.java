@@ -6,10 +6,13 @@ import com.roncoo.pay.permission.shiro.filter.RcFormAuthenticationFilter;
 import com.roncoo.pay.permission.shiro.realm.OperatorRealm;
 import com.roncoo.pay.permission.shiro.spring.SpringCacheManagerWrapper;
 import org.apache.commons.collections.map.LinkedMap;
+import org.apache.shiro.codec.Base64;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
@@ -68,6 +71,22 @@ public class ShiroConfig {
         return operatorRealm;
     }
 
+    @Bean(name = "rememberMeCookie")
+    public SimpleCookie rememberMeCookie() {
+        SimpleCookie simpleCookie = new SimpleCookie();
+        simpleCookie.setName("rememberMe");
+        simpleCookie.setHttpOnly(true);
+        simpleCookie.setMaxAge(30*24*60*60);
+        return simpleCookie;
+    }
+
+    @Bean(name = "rememberMeManager")
+    public CookieRememberMeManager cookieRememberMeManager(@Qualifier("rememberMeCookie") SimpleCookie rememberMeCookie) {
+        CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
+        cookieRememberMeManager.setCookie(rememberMeCookie);
+        return cookieRememberMeManager;
+    }
+
     /**
      * 安全管理器
      *
@@ -75,8 +94,11 @@ public class ShiroConfig {
      * @return 安全管理器
      */
     @Bean(name = "securityManager")
-    public DefaultWebSecurityManager defaultWebSecurityManager(@Qualifier("userRealm") OperatorRealm operatorRealm) {
+    public DefaultWebSecurityManager defaultWebSecurityManager(
+            @Qualifier("userRealm") OperatorRealm operatorRealm,
+            @Qualifier("rememberMeManager") CookieRememberMeManager rememberMeManager) {
         DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
+        defaultWebSecurityManager.setRememberMeManager(rememberMeManager);
         defaultWebSecurityManager.setRealm(operatorRealm);
         return defaultWebSecurityManager;
     }
@@ -155,7 +177,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/favicon.ico", "anon");
         filterChainDefinitionMap.put("/login", "rcCaptchaValidate,authc");
         filterChainDefinitionMap.put("/logout", "logout");
-        filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/**", "user");
+        //“/** = authc” 表示访问该地址用户必须身份验证通过（Subject. isAuthenticated()==true）；
+        //“/** = user” 表示访问该地址的用户是身份验证通过或 RememberMe 登录的都可以。
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
         return shiroFilterFactoryBean;
